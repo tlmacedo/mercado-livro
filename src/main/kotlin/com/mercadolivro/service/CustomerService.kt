@@ -1,42 +1,39 @@
 package com.mercadolivro.service
 
 import com.mercadolivro.model.CustomerModel
+import com.mercadolivro.repository.CustomerReposidory
 import org.springframework.stereotype.Service
 
 @Service
-class CustomerService {
+class CustomerService(
+    val customerReposidory: CustomerReposidory
+) {
 
-    val customers = mutableListOf<CustomerModel>()
-
-    fun getAll(): List<CustomerModel> {
-//        name?.let {
-//            return customers.filter { it.nome.contains(name, true) }
-//        }
-        return customers
+    fun getAll(name: String?): List<CustomerModel> {
+        name?.let {
+            return customerReposidory.findByNameContaining(it)
+        }
+        return customerReposidory.findAll().toList()
     }
 
-    fun getCustomer(id: String): CustomerModel {
-        return customers.filter { it.id == id }.first()
+    fun getCustomer(id: Int): CustomerModel {
+        return customerReposidory.findById(id).orElseThrow()
     }
 
     fun create(customer: CustomerModel) {
-        customer.id = if (customers.isEmpty()) {
-            1
-        } else {
-            customers.last().id!!.toInt() + 1
-        }.toString()
-        customers.add(customer)
+        customerReposidory.save(customer)
     }
 
     fun update(customer: CustomerModel) {
-        customers.filter { it.id == customer.id }.first().let {
-            it.nome = customer.nome
-            it.email = customer.email
-        }
+        if (!customerReposidory.existsById(customer.id!!))
+            throw Exception()
+        customerReposidory.save(customer)
     }
 
-    fun delete(id: String) {
-        customers.removeIf { it.id == id }
+    fun delete(id: Int) {
+        if (!customerReposidory.existsById(id))
+            throw Exception()
+        customerReposidory.deleteById(id)
     }
 
 }
