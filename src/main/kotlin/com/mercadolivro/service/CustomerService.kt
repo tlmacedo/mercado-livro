@@ -9,14 +9,14 @@ class CustomerService(
     val customerReposidory: CustomerReposidory
 ) {
 
-    fun getAll(name: String?): List<CustomerModel> {
-        name?.let {
-            return customerReposidory.findByNameContaining(it)
+    fun getAll(nome: String?): List<CustomerModel> {
+        nome?.let {
+            return customerReposidory.findByNomeContaining(it)
         }
         return customerReposidory.findAll().toList()
     }
 
-    fun getCustomer(id: Int): CustomerModel {
+    fun getById(id: Int): CustomerModel {
         return customerReposidory.findById(id).orElseThrow()
     }
 

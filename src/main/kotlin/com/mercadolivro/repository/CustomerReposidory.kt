@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface CustomerReposidory : CrudRepository<CustomerModel, Int> {
 
-    fun findByNameContaining(name: String?): List<CustomerModel>
+    fun findByNomeContaining(nome: String?): List<CustomerModel>
 }

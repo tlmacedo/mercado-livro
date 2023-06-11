@@ -1,14 +1,12 @@
 package com.mercadolivro.model
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import com.mercadolivro.enums.BookStatus
+import jakarta.persistence.*
 import org.hibernate.Hibernate
+import java.math.BigDecimal
 
-@Entity(name = "customer")
-data class CustomerModel(
+@Entity(name = "book")
+data class BookModel(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,12 +16,21 @@ data class CustomerModel(
     var nome: String,
 
     @Column
-    var email: String
+    var price: BigDecimal,
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    var status: BookStatus? = null,
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
+    @JoinColumn(name = "customer_id")
+    var customer: CustomerModel? = null
+
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || Hibernate.getClass(this) != Hibernate.getClass(other)) return false
-        other as CustomerModel
+        other as BookModel
 
         return id != null && id == other.id
     }
@@ -32,6 +39,6 @@ data class CustomerModel(
 
     @Override
     override fun toString(): String {
-        return this::class.simpleName + "(id = $id )"
+        return this::class.simpleName + "(id = $id , nome = $nome , price = $price , status = $status , customer = $customer )"
     }
 }
